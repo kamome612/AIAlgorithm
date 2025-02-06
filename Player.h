@@ -15,5 +15,6 @@ public:
     void Draw() override;
 	bool CheckHit(const Rect& me,const Rect& other);
     Rect GetRect() { return  playerRect; }
+    Point GetPos() { return pos_; }
 };
 

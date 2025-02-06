@@ -72,7 +72,9 @@ void Enemy::Update()
 	int cy = (pos_.y / (CHA_HEIGHT)) % 2;
 	if (prgssx == 0 && prgssy == 0 && cx && cy)
 	{
-		forward_ = (DIR)(GetRand(3));
+		//forward_ = (DIR)(GetRand(3));
+		XYCloserMoveRandom();
+		//XYCloserMove();
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
 	//static int judg = 0;
@@ -162,4 +164,73 @@ bool Enemy::HitToChip(int x, int y)
 		}
 	}
 	return false;
+}
+
+void Enemy::XCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	if (pos_.x > player->GetPos().x)
+	{
+		forward_ = LEFT;
+	}
+	else if (pos_.x < player->GetPos().x)
+	{
+		forward_ = RIGHT;
+	}
+}
+
+void Enemy::YCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	if (pos_.y > player->GetPos().y)
+	{
+		forward_ = UP;
+	}
+	else if (pos_.y < player->GetPos().y)
+	{
+		forward_ = DOWN;
+	}
+}
+
+void Enemy::XYCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	int xdis = abs(pos_.x - player->GetPos().x);
+	int ydis = abs(pos_.y - player->GetPos().y);
+
+	if (xdis > ydis) {
+		if (pos_.x > player->GetPos().x)
+		{
+			forward_ = LEFT;
+		}
+		else if (pos_.x < player->GetPos().x)
+		{
+			forward_ = RIGHT;
+		}
+	}
+	else
+	{
+		if (pos_.y > player->GetPos().y)
+		{
+			forward_ = UP;
+		}
+		else if (pos_.y < player->GetPos().y)
+		{
+			forward_ = DOWN;
+		}
+	}
+}
+
+void Enemy::XYCloserMoveRandom()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	int rnum = GetRand(2);
+	if (rnum == 0)
+	{
+		XYCloserMove();
+	}
+	else if (rnum == 1)
+	{
+		forward_ = (DIR)GetRand(3);
+	}
 }

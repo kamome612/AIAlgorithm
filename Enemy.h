@@ -22,5 +22,9 @@ public:
     void Draw() override;
     bool CheckHit(const Rect& me, const Rect& other);
     bool HitToChip(int x, int y);
+    void XCloserMove();
+    void YCloserMove();
+    void XYCloserMove();
+    void XYCloserMoveRandom();
 };
 

@@ -2,7 +2,6 @@
 #include "./Library/GameObject.h"
 #include "./globals.h"
 
-
 class Enemy :
     public GameObject
 {
@@ -26,5 +25,6 @@ public:
     void YCloserMove();
     void XYCloserMove();
     void XYCloserMoveRandom();
+    void RightHandMove();
 };
 

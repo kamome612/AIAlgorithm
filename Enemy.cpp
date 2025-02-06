@@ -73,8 +73,9 @@ void Enemy::Update()
 	if (prgssx == 0 && prgssy == 0 && cx && cy)
 	{
 		//forward_ = (DIR)(GetRand(3));
-		XYCloserMoveRandom();
-		//XYCloserMove();
+		//XYCloserMoveRandom();
+		//XYCloserMove(); 
+		RightHandMove();
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
 	//static int judg = 0;
@@ -232,5 +233,33 @@ void Enemy::XYCloserMoveRandom()
 	else if (rnum == 1)
 	{
 		forward_ = (DIR)GetRand(3);
+	}
+}
+
+void Enemy::RightHandMove()
+{
+	DIR myRight[4] = { RIGHT,LEFT,UP,DOWN };
+	DIR myLeft[4] = { LEFT,RIGHT,DOWN,UP };
+	Point nposF = { pos_.x + nDir[forward_].x,pos_.y + nDir[forward_].y };
+	Point nposR = { pos_.x + nDir[myRight[forward_]].x,pos_.y + nDir[myRight[forward_]].y };
+	Rect myRectF{ nposF.x,nposF.y,CHA_WIDTH,CHA_HEIGHT };
+	Rect myRectR{ nposR.x,nposR.y,CHA_WIDTH,CHA_HEIGHT };
+	Stage* stage = (Stage*)FindGameObject<Stage>();
+	bool isRightOpen = true;
+	bool isForwardOpen = true;
+	for (auto& obj : stage->GetStageRects()) {
+		if (CheckHit(myRectF, obj)) {
+			isForwardOpen = false;
+		}
+		if (CheckHit(myRectR, obj)) {
+			isRightOpen = false;
+		}
+	}
+
+	if (isRightOpen) {
+		forward_ = myRight[forward_];
+	}
+	else if (isRightOpen == false && isForwardOpen == false) {
+		forward_ = myLeft[forward_];
 	}
 }

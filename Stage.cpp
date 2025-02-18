@@ -1,6 +1,7 @@
 #include "Stage.h"
 #include "./globals.h"
 #include <stack>
+#include <time.h>
 
 namespace {
 	std::stack<Point> prStack;
@@ -99,7 +100,9 @@ Stage::Stage()
 
 		}
 	}*/
+	srand((unsigned)time(NULL));
 	MakeMazeDigDug(STAGE_WIDTH,STAGE_HEIGHT,stageData);
+	setHole();
 	setStageRects();
 }
 
@@ -148,4 +151,18 @@ void Stage::setStageRects()
 		}
 	}
 
+}
+
+void Stage::setHole()
+{
+	for (int i = 0; i < 50; i++) {
+		int w = GetRand(STAGE_WIDTH - 2) + 1;
+		int h = GetRand(STAGE_HEIGHT - 2) + 1;
+		if (stageData[h][w] == STAGE_OBJ::WALL) {
+			stageData[h][w] = STAGE_OBJ::EMPTY;
+		}
+		else {
+			i--;
+		}
+	}
 }

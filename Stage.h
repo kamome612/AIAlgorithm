@@ -27,5 +27,6 @@ public:
 	STAGE_OBJ GetStageData(int x, int y) {return stageData[y][x];}
 	vector<Rect> GetStageRects() { return stageRects; }
 	void setStageRects();
+	void setHole();
 };
 

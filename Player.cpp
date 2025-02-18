@@ -94,7 +94,7 @@ void Player::Update()
 			}
 			else
 			{
-				//それ以外で引っ掛かった時（いつやん）
+				//それ以外で引っ掛かった時
 				pos_.x = ox;
 				pos_.y = oy;
 			}

@@ -74,8 +74,8 @@ void Enemy::Update()
 	{
 		//forward_ = (DIR)(GetRand(3));
 		//XYCloserMoveRandom();
-		//XYCloserMove(); 
-		RightHandMove();
+		XYCloserMove(); 
+		//RightHandMove();
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
 	//static int judg = 0;

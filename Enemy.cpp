@@ -1,9 +1,10 @@
 #include "Enemy.h"
 #include "./Stage.h"
 #include "globals.h"
-#include "time.h"
 #include "ImGui/imgui.h"
 #include "Player.h"
+#include "time.h"
+#include "ImGui/imgui.h"
 
 namespace
 {
@@ -11,7 +12,7 @@ namespace
 }
 
 Enemy::Enemy()
-    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0})
+    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true)
 {
    /* int rx = GetRand(STAGE_WIDTH * CHA_WIDTH);
     int ry = GetRand(STAGE_HEIGHT * CHA_HEIGHT);*/
@@ -70,13 +71,14 @@ void Enemy::Update()
 	int prgssy = pos_.y % (CHA_HEIGHT);
 	int cx = (pos_.x / (CHA_WIDTH)) % 2;
 	int cy = (pos_.y / (CHA_HEIGHT)) % 2;
+
 	if (prgssx == 0 && prgssy == 0 && cx && cy)
 	{
 		//forward_ = (DIR)(GetRand(3));
 		//XYCloserMoveRandom();
-		XYCloserMove(); 
+		//XYCloserMove(); 
 		//RightHandMove();
-		int tmp = GetRand(2);
+		/*int tmp = GetRand(2);
 		switch (tmp) 
 		{
 		case 0:
@@ -88,6 +90,22 @@ void Enemy::Update()
 		case 2:
 		default:
 			break;
+		}*/
+
+		int tmp = GetRand(5);
+		if (tmp == 3) {
+			if (isRandom_ == true) {
+				isRandom_ = false;
+			}
+			else {
+				isRandom_ = true;
+			}
+		}
+		if (isRandom_) {
+			XYCloserMoveRandom();
+		}
+		else {
+			RightHandMove();
 		}
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
@@ -153,6 +171,16 @@ void Enemy::Draw()
 		         tp[forward_][1].x, tp[forward_][1].y,
 		         tp[forward_][2].x, tp[forward_][2].y,
 		         GetColor(255, 255, 255), TRUE);
+
+	ImGui::Begin("config 1");
+	ImGui::Text("Enemy MoveMethod");
+	if (isRandom_) {
+		ImGui::Text("Random");
+	}
+	else {
+		ImGui::Text("RightHand");
+	}
+	ImGui::End();
 }
 
 bool Enemy::CheckHit(const Rect& me, const Rect& other)

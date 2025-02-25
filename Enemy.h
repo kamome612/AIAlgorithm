@@ -10,6 +10,7 @@ class Enemy :
     float speed_;
     Point nextPos_;
     DIR forward_;
+    bool isRandom_;
     /*Point move_;
     bool moveNow_;
     Point dis;*/

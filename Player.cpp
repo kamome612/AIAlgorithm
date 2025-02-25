@@ -2,6 +2,7 @@
 #include "./Source/Input.h"
 #include "./Stage.h"
 #include "globals.h"
+#include "ImGui/imgui.h"
 
 namespace {
 	//enum DIR

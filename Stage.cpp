@@ -12,7 +12,7 @@ namespace {
 		Point Dir[]{ {0,-1},{1, 0},{0, 1},{-1,0} };
 		std::vector<int> dList;
 		for (int i = 0; i < 4; i++) {
-			//nextを0~3まで回してでたーを取得
+			//nextを0~3まで回してデータを取得
 			Point next = Point{ x + Dir[i].x, y + Dir[i].y };
 			Point nextNext = { next.x + Dir[i].x, next.y + Dir[i].y };
 			if (nextNext.x < 0 || nextNext.y < 0 || nextNext.x > STAGE_WIDTH - 1 || nextNext.y > STAGE_HEIGHT - 1)
@@ -82,7 +82,7 @@ Stage::Stage()
 {
 	stageData = vector(STAGE_HEIGHT, vector<STAGE_OBJ>(STAGE_WIDTH, STAGE_OBJ::EMPTY));
 
-	/*for (int y = 0; y < STAGE_HEIGHT; y++)
+	for (int y = 0; y < STAGE_HEIGHT; y++)
 	{
 		for (int x = 0; x < STAGE_WIDTH; x++)
 		{
@@ -99,10 +99,10 @@ Stage::Stage()
 			}
 
 		}
-	}*/
-	srand((unsigned)time(NULL));
-	MakeMazeDigDug(STAGE_WIDTH,STAGE_HEIGHT,stageData);
-	setHole();
+	}
+	//srand((unsigned)time(NULL));
+	//MakeMazeDigDug(STAGE_WIDTH,STAGE_HEIGHT,stageData);
+	//setHole();
 	setStageRects();
 }
 

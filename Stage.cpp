@@ -155,9 +155,9 @@ void Stage::setStageRects()
 
 void Stage::setHole()
 {
-	for (int i = 0; i < 50; i++) {
-		int w = GetRand(STAGE_WIDTH - 2) + 1;
-		int h = GetRand(STAGE_HEIGHT - 2) + 1;
+	for (int i = 0; i < 100; i++) {
+		int w = GetRand(STAGE_WIDTH - 3) + 1;
+		int h = GetRand(STAGE_HEIGHT - 3) + 1;
 		if (stageData[h][w] == STAGE_OBJ::WALL) {
 			stageData[h][w] = STAGE_OBJ::EMPTY;
 		}

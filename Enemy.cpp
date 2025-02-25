@@ -76,6 +76,19 @@ void Enemy::Update()
 		//XYCloserMoveRandom();
 		XYCloserMove(); 
 		//RightHandMove();
+		int tmp = GetRand(2);
+		switch (tmp) 
+		{
+		case 0:
+			XYCloserMove();
+			break;
+		case 1:
+			XYCloserMoveRandom();
+			break;
+		case 2:
+		default:
+			break;
+		}
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
 	//static int judg = 0;

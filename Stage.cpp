@@ -5,6 +5,7 @@
 
 namespace {
 	std::stack<Point> prStack;
+	Point Start, Goal;
 
 	void DigDug(int x, int y, vector<vector<STAGE_OBJ>>& _stage)
 	{

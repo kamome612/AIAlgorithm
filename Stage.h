@@ -17,8 +17,11 @@ constexpr int STAGE_HEIGHT = (Screen::HEIGHT / CHA_HEIGHT) % 2 ? (Screen::HEIGHT
 class Stage :
     public GameObject
 {
+private:
 	vector<vector<STAGE_OBJ>> stageData;
+	vector<vector<int>> stageDataForSearch;
 	vector<Rect> stageRects;
+	const Point dirs[4]{ {0,1},{0,-1},{1,0},{-1,0} };
 public:
 	Stage();
 	~Stage();
@@ -28,5 +31,8 @@ public:
 	vector<Rect> GetStageRects() { return stageRects; }
 	void setStageRects();
 	void setHole();
+	void BFS(Point Start,Point Goal);
+	void Dijkstra(std::pair<int,int> sp);
+	vector<Point> restore(int tx, int ty);
 };
 

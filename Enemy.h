@@ -1,6 +1,7 @@
 #pragma once
 #include "./Library/GameObject.h"
 #include "./globals.h"
+#include <vector>
 
 class Enemy :
     public GameObject
@@ -12,6 +13,7 @@ class Enemy :
     DIR forward_;
     bool isRandom_;
     bool isRight_;
+    std::vector<Point> route_;
     /*Point move_;
     bool moveNow_;
     Point dis;*/

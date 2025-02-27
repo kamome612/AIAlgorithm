@@ -2,10 +2,13 @@
 #include "./globals.h"
 #include <stack>
 #include <time.h>
+#include <queue>
+#include <numeric>
+#include <map>
 
 namespace {
 	std::stack<Point> prStack;
-	Point Start, Goal;
+	//Point Start, Goal;
 
 	void DigDug(int x, int y, vector<vector<STAGE_OBJ>>& _stage)
 	{
@@ -76,7 +79,6 @@ namespace {
 			}
 		}
 	}
-
 }
 
 Stage::Stage()
@@ -166,4 +168,89 @@ void Stage::setHole()
 			i--;
 		}
 	}
+}
+
+std::queue<std::pair<Point, int>>myQueue;
+//vector<vector<int>> stageDataForSearch;
+vector<vector<int>> dist(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, INT_MAX));
+vector<vector<Point>> pre(STAGE_HEIGHT, vector<Point>(STAGE_WIDTH, { -1,-1 }));
+
+void Stage::BFS(Point Start,Point Goal)
+{
+	//探索用
+	Point np[4]{ {0,-1},{1,0},{0,1},{-1,0} };
+	int step = 0;
+	//キュースタート地点とステップ数を記録
+	myQueue.push({ Start,step });
+	//スタート地点のステップ数をstepに設定
+	stageDataForSearch[Start.y][Start.x] = step;
+	//探索候補のキューが空ではない間探索を続行
+	while (!myQueue.empty())
+	{
+		//キューから探索候補を取ってくる
+		std::pair<Point, int> Crr = myQueue.front();
+		myQueue.pop();
+		//上のnp[]を使って自分の4近傍を探索
+		for (int i = 0; i < 4; i++) {
+			Point tmp = { Crr.first.x + np[i].x,Crr.first.y + np[i].y };
+			if (tmp.x == 0 || tmp.x == STAGE_WIDTH - 1 ||
+				tmp.y == 0 || tmp.y == STAGE_HEIGHT - 1)
+				continue;
+			//隣がEMPTY(床)だったら進める
+			if (stageData[tmp.y][tmp.x] == STAGE_OBJ::EMPTY) {
+				stageDataForSearch[tmp.y][tmp.x] = Crr.second + 1;
+				myQueue.push({ tmp,stageDataForSearch[tmp.y][tmp.x] });
+			}
+			//stageData[Crr.first.y][Crr.first.x] = BAR;
+		}
+	}
+}
+
+using vecInt = std::pair<int, int>;
+using Mdat = std::pair<int, vecInt>;
+
+void Stage::Dijkstra(std::pair<int, int> sp)
+{
+	if (sp.second >= 0 && sp.second <= STAGE_HEIGHT &&
+		sp.first >= 0 && sp.first <= STAGE_WIDTH) {
+		dist[sp.second][sp.first] = 0;
+		std::priority_queue<Mdat, std::vector<Mdat>, std::greater<Mdat>> pq;
+		pq.push(Mdat(0, { sp.first,sp.second }));
+
+		while (!pq.empty())
+		{
+			Mdat p = pq.top();
+			pq.pop();
+
+			int c = p.first;
+			vecInt v = p.second;
+
+			for (int i = 0; i < 4; i++)
+			{
+				vecInt np = { v.first + (int)dirs[i].x,v.second + (int)dirs[i].y };
+				if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
+				if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
+				if (dist[np.second][np.first] <= 1 + c) continue;
+				pre[np.second][np.first] = Point{ v.first, v.second };
+				pq.push(Mdat(dist[np.second][np.first], np));
+			}
+		}
+	}
+	else {
+		printfDx("!");
+	}
+}
+
+vector<Point> Stage::restore(int tx, int ty)
+{
+	vector<Point> path;
+	int x = tx;
+	int y = ty;
+	for (; tx != -1 || ty != -1; tx = pre[y][x].x, ty = pre[y][x].y) {
+		path.push_back(Point{tx, ty});
+		x = (int)tx, y = (int)ty;
+	}
+	reverse(path.begin(), path.end());
+
+	return path;
 }

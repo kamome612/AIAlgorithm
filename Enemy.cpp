@@ -37,13 +37,16 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
-	static bool stop = false;
+	Player* player = (Player*)FindGameObject<Player>();
+	Point pPos = player->GetPos();
+	Stage* stage = (Stage*)FindGameObject<Stage>();
+	static bool stop = true;
 
 	if (!stop) {
 		Point op = pos_;
 		Point move = { nDir[forward_].x,nDir[forward_].y };
 		Rect eRect = { pos_.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
-		Stage* stage = (Stage*)FindGameObject<Stage>();
+		//Stage* stage = (Stage*)FindGameObject<Stage>();
 		pos_ = { pos_.x + move.x,pos_.y + move.y };
 		for (auto& obj : stage->GetStageRects())
 		{
@@ -108,12 +111,14 @@ void Enemy::Update()
 			RightHandMove();
 		}*/
 
-		if (isRight_) {
+		/*if (isRight_) {
 			RightHandMove();
 		}
 		else {
 			LeftHandMove();
-		}
+		}*/
+		//stage->Dijkstra({ pos_.x,pos_.y });
+		//route_ = stage->restore(pPos.x, pPos.y);
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
 	//static int judg = 0;
@@ -178,6 +183,13 @@ void Enemy::Draw()
 		         tp[forward_][1].x, tp[forward_][1].y,
 		         tp[forward_][2].x, tp[forward_][2].y,
 		         GetColor(255, 255, 255), TRUE);
+	int Cr = GetColor(173, 255, 47);
+	for (auto itr : route_)
+	{
+		DrawBox((int)itr.x * CHA_WIDTH, (int)itr.y * CHA_HEIGHT,
+			(int)itr.x * CHA_WIDTH + CHA_WIDTH + 1,
+			(int)itr.y * CHA_HEIGHT + CHA_HEIGHT + 1, Cr, false);
+	}
 
 	ImGui::Begin("config 1");
 	ImGui::Text("Enemy MoveMethod");

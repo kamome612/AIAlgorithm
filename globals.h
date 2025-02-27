@@ -18,7 +18,6 @@
 		Point GetCenter() { return Point{ x + w / 2, y + h / 2 }; }
 	};
 
-
 	enum class STAGE_OBJ {
 		EMPTY,
 		WALL,

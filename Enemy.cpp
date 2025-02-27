@@ -12,7 +12,7 @@ namespace
 }
 
 Enemy::Enemy()
-    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true)
+    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true),isRight_(true)
 {
    /* int rx = GetRand(STAGE_WIDTH * CHA_WIDTH);
     int ry = GetRand(STAGE_HEIGHT * CHA_HEIGHT);*/
@@ -92,7 +92,7 @@ void Enemy::Update()
 			break;
 		}*/
 
-		int tmp = GetRand(5);
+		/*int tmp = GetRand(5);
 		if (tmp == 3) {
 			if (isRandom_ == true) {
 				isRandom_ = false;
@@ -106,6 +106,13 @@ void Enemy::Update()
 		}
 		else {
 			RightHandMove();
+		}*/
+
+		if (isRight_) {
+			RightHandMove();
+		}
+		else {
+			LeftHandMove();
 		}
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
@@ -174,12 +181,19 @@ void Enemy::Draw()
 
 	ImGui::Begin("config 1");
 	ImGui::Text("Enemy MoveMethod");
-	if (isRandom_) {
+	if (ImGui::RadioButton("RightHandMove", isRight_ == true)) {
+		isRight_ = true;
+	}
+	if (ImGui::RadioButton("LeftHandMove", isRight_ == false)) {
+		isRight_ = false;
+	}
+
+	/*if (isRandom_) {
 		ImGui::Text("Random");
 	}
 	else {
 		ImGui::Text("RightHand");
-	}
+	}*/
 	ImGui::End();
 }
 
@@ -281,6 +295,34 @@ void Enemy::RightHandMove()
 {
 	DIR myRight[4] = { RIGHT,LEFT,UP,DOWN };
 	DIR myLeft[4] = { LEFT,RIGHT,DOWN,UP };
+	Point nposF = { pos_.x + nDir[forward_].x,pos_.y + nDir[forward_].y };
+	Point nposR = { pos_.x + nDir[myRight[forward_]].x,pos_.y + nDir[myRight[forward_]].y };
+	Rect myRectF{ nposF.x,nposF.y,CHA_WIDTH,CHA_HEIGHT };
+	Rect myRectR{ nposR.x,nposR.y,CHA_WIDTH,CHA_HEIGHT };
+	Stage* stage = (Stage*)FindGameObject<Stage>();
+	bool isRightOpen = true;
+	bool isForwardOpen = true;
+	for (auto& obj : stage->GetStageRects()) {
+		if (CheckHit(myRectF, obj)) {
+			isForwardOpen = false;
+		}
+		if (CheckHit(myRectR, obj)) {
+			isRightOpen = false;
+		}
+	}
+
+	if (isRightOpen) {
+		forward_ = myRight[forward_];
+	}
+	else if (isRightOpen == false && isForwardOpen == false) {
+		forward_ = myLeft[forward_];
+	}
+}
+
+void Enemy::LeftHandMove()
+{
+	DIR myRight[4] = { LEFT,RIGHT,DOWN,UP };
+	DIR myLeft[4] = { RIGHT, LEFT, UP, DOWN };
 	Point nposF = { pos_.x + nDir[forward_].x,pos_.y + nDir[forward_].y };
 	Point nposR = { pos_.x + nDir[myRight[forward_]].x,pos_.y + nDir[myRight[forward_]].y };
 	Rect myRectF{ nposF.x,nposF.y,CHA_WIDTH,CHA_HEIGHT };

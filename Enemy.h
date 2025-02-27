@@ -11,6 +11,7 @@ class Enemy :
     Point nextPos_;
     DIR forward_;
     bool isRandom_;
+    bool isRight_;
     /*Point move_;
     bool moveNow_;
     Point dis;*/
@@ -27,5 +28,6 @@ public:
     void XYCloserMove();
     void XYCloserMoveRandom();
     void RightHandMove();
+    void LeftHandMove();
 };
 

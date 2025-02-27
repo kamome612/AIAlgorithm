@@ -100,8 +100,8 @@ Stage::Stage()
 
 		}
 	}
-	//srand((unsigned)time(NULL));
-	//MakeMazeDigDug(STAGE_WIDTH,STAGE_HEIGHT,stageData);
+	srand((unsigned)time(NULL));
+	MakeMazeDigDug(STAGE_WIDTH,STAGE_HEIGHT,stageData);
 	//setHole();
 	setStageRects();
 }

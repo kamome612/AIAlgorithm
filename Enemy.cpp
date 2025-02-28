@@ -117,7 +117,13 @@ void Enemy::Update()
 		else {
 			LeftHandMove();
 		}*/
-		//stage->Dijkstra({ pos_.x,pos_.y });
+		int x = pos_.x / CHA_WIDTH;
+		int y = pos_.y / CHA_HEIGHT;
+		stage->Dijkstra({ x, y });
+		//stage->Dijkstra({ pos_.x, pos_.y });
+		x = pPos.x / CHA_WIDTH;
+		y = pPos.y / CHA_HEIGHT;
+		route_ = stage->restore(x, y);
 		//route_ = stage->restore(pPos.x, pPos.y);
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
@@ -184,6 +190,7 @@ void Enemy::Draw()
 		         tp[forward_][2].x, tp[forward_][2].y,
 		         GetColor(255, 255, 255), TRUE);
 	int Cr = GetColor(173, 255, 47);
+
 	for (auto itr : route_)
 	{
 		DrawBox((int)itr.x * CHA_WIDTH, (int)itr.y * CHA_HEIGHT,
@@ -200,6 +207,7 @@ void Enemy::Draw()
 		isRight_ = false;
 	}
 
+	ImGui::Text("route_ : %d", route_.size());
 	/*if (isRandom_) {
 		ImGui::Text("Random");
 	}

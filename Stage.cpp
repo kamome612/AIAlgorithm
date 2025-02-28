@@ -211,34 +211,48 @@ using Mdat = std::pair<int, vecInt>;
 
 void Stage::Dijkstra(std::pair<int, int> sp)
 {
-	if (sp.second >= 0 && sp.second <= STAGE_HEIGHT &&
-		sp.first >= 0 && sp.first <= STAGE_WIDTH) {
-		dist[sp.second][sp.first] = 0;
-		std::priority_queue<Mdat, std::vector<Mdat>, std::greater<Mdat>> pq;
-		pq.push(Mdat(0, { sp.first,sp.second }));
+	dist[sp.second][sp.first] = 0;
+	std::priority_queue<Mdat, std::vector<Mdat>, std::greater<Mdat>> pq;
+	pq.push(Mdat(0, { sp.first,sp.second }));
 
-		while (!pq.empty())
+	if (pq.empty()) {
+		return;
+	}
+
+	Mdat p = pq.top();
+	pq.pop();
+
+	int c = p.first;
+	vecInt v = p.second;
+
+	for (int i = 0; i < 4; i++)
+	{
+		vecInt np = { v.first + (int)dirs[i].x,v.second + (int)dirs[i].y };
+		if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
+		if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
+		if (dist[np.second][np.first] <= 1 + c) continue;
+		pre[np.second][np.first] = Point{ v.first, v.second };
+		pq.push(Mdat(dist[np.second][np.first], np));
+	}
+
+	/*while (!pq.empty())
+	{
+		Mdat p = pq.top();
+		pq.pop();
+
+		int c = p.first;
+		vecInt v = p.second;
+
+		for (int i = 0; i < 4; i++)
 		{
-			Mdat p = pq.top();
-			pq.pop();
-
-			int c = p.first;
-			vecInt v = p.second;
-
-			for (int i = 0; i < 4; i++)
-			{
-				vecInt np = { v.first + (int)dirs[i].x,v.second + (int)dirs[i].y };
-				if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
-				if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
-				if (dist[np.second][np.first] <= 1 + c) continue;
-				pre[np.second][np.first] = Point{ v.first, v.second };
-				pq.push(Mdat(dist[np.second][np.first], np));
-			}
+			vecInt np = { v.first + (int)dirs[i].x,v.second + (int)dirs[i].y };
+			if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
+			if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
+			if (dist[np.second][np.first] <= 1 + c) continue;
+			pre[np.second][np.first] = Point{ v.first, v.second };
+			pq.push(Mdat(dist[np.second][np.first], np));
 		}
-	}
-	else {
-		printfDx("!");
-	}
+	}*/
 }
 
 vector<Point> Stage::restore(int tx, int ty)

@@ -25,11 +25,12 @@ public:
     void Draw() override;
     bool CheckHit(const Rect& me, const Rect& other);
     bool HitToChip(int x, int y);
-    void XCloserMove();
-    void YCloserMove();
-    void XYCloserMove();
-    void XYCloserMoveRandom();
-    void RightHandMove();
-    void LeftHandMove();
+    void XCloserMove();  //Xで近づく
+    void YCloserMove();  //Yで近づく
+    void XYCloserMove(); //XYで近づく
+    void XYCloserMoveRandom(); //XYで近づきつつランダムもある
+    void RightHandMove(); //右手法
+    void LeftHandMove();  //左手法
+    void Move(Point p); //単なる移動
 };
 

@@ -124,6 +124,10 @@ void Enemy::Update()
 		x = pPos.x / CHA_WIDTH;
 		y = pPos.y / CHA_HEIGHT;
 		route_ = stage->restore(x, y);
+
+		for (auto& point : route_) {
+			Move(point);
+		}
 		//route_ = stage->restore(pPos.x, pPos.y);
 	}
 	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
@@ -364,5 +368,30 @@ void Enemy::LeftHandMove()
 	}
 	else if (isRightOpen == false && isForwardOpen == false) {
 		forward_ = myLeft[forward_];
+	}
+}
+
+void Enemy::Move(Point p)
+{
+	for (; p.x == pos_.x && p.y == pos_.y;) {
+		if (p.x - pos_.x == 0) {
+			if (p.y > pos_.y) {
+				pos_.y++;
+			}
+			else {
+				pos_.y--;
+			}
+		}
+		else if (p.y - pos_.y == 0) {
+			if (p.x > pos_.x) {
+				pos_.x++;
+			}
+			else {
+				pos_.y--;
+			}
+		}
+		else {
+			return;
+		}
 	}
 }

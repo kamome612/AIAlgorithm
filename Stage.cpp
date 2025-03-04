@@ -215,7 +215,7 @@ void Stage::Dijkstra(std::pair<int, int> sp)
 	std::priority_queue<Mdat, std::vector<Mdat>, std::greater<Mdat>> pq;
 	pq.push(Mdat(0, { sp.first,sp.second }));
 
-	if (pq.empty()) {
+	/*if (pq.empty()) {
 		return;
 	}
 
@@ -231,11 +231,12 @@ void Stage::Dijkstra(std::pair<int, int> sp)
 		if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
 		if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
 		if (dist[np.second][np.first] <= 1 + c) continue;
+		dist[np.second][np.first] = 1 + c;
 		pre[np.second][np.first] = Point{ v.first, v.second };
 		pq.push(Mdat(dist[np.second][np.first], np));
-	}
+	}*/
 
-	/*while (!pq.empty())
+	while (!pq.empty())
 	{
 		Mdat p = pq.top();
 		pq.pop();
@@ -249,10 +250,11 @@ void Stage::Dijkstra(std::pair<int, int> sp)
 			if (np.first < 0 || np.second < 0 || np.first >= STAGE_WIDTH || np.second >= STAGE_HEIGHT) continue;
 			if (stageData[np.second][np.first] == STAGE_OBJ::WALL) continue;
 			if (dist[np.second][np.first] <= 1 + c) continue;
+			dist[np.second][np.first] = 1 + c;
 			pre[np.second][np.first] = Point{ v.first, v.second };
 			pq.push(Mdat(dist[np.second][np.first], np));
 		}
-	}*/
+	}
 }
 
 vector<Point> Stage::restore(int tx, int ty)

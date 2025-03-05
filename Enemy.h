@@ -14,6 +14,7 @@ class Enemy :
     bool isRandom_;
     bool isRight_;
     bool isDijkstra_;
+    int type_;
     std::vector<Point> route_;
     /*Point move_;
     bool moveNow_;

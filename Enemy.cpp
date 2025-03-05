@@ -13,7 +13,7 @@ namespace
 
 Enemy::Enemy()
     :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true),isRight_(true),
-	 isDijkstra_(false)
+	 isDijkstra_(true)
 {
    /* int rx = GetRand(STAGE_WIDTH * CHA_WIDTH);
     int ry = GetRand(STAGE_HEIGHT * CHA_HEIGHT);*/

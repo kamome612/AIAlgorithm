@@ -12,7 +12,8 @@ namespace
 }
 
 Enemy::Enemy()
-    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true),isRight_(true)
+    :pos_({ 0,0 }), isAlive_(true),nextPos_({0,0}),isRandom_(true),isRight_(true),
+	 isDijkstra_(false)
 {
    /* int rx = GetRand(STAGE_WIDTH * CHA_WIDTH);
     int ry = GetRand(STAGE_HEIGHT * CHA_HEIGHT);*/
@@ -40,144 +41,98 @@ void Enemy::Update()
 	Player* player = (Player*)FindGameObject<Player>();
 	Point pPos = player->GetPos();
 	Stage* stage = (Stage*)FindGameObject<Stage>();
-	static bool stop = true;
+	static bool stop = false;
+
+	//if (!stop) {
+	//	Point op = pos_;
+	//	Point move = { nDir[forward_].x,nDir[forward_].y };
+	//	Rect eRect = { pos_.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
+	//	//Stage* stage = (Stage*)FindGameObject<Stage>();
+	//	pos_ = { pos_.x + move.x,pos_.y + move.y };
+	//	for (auto& obj : stage->GetStageRects())
+	//	{
+	//		if (CheckHit(eRect, obj)) {
+	//			Rect tmpRectX = { op.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
+	//			Rect tmpRectY = { pos_.x,op.y,CHA_WIDTH,CHA_HEIGHT };
+	//			if (!CheckHit(tmpRectX, obj))
+	//			{
+	//				pos_.x = op.x;
+	//			}
+	//			else if (!CheckHit(tmpRectY, obj))
+	//			{
+	//				pos_.y = op.y;
+	//			}
+	//			else
+	//			{
+	//				pos_ = op;
+	//			}
+	//			forward_ = (DIR)(GetRand(3));
+	//			break;
+	//		}
+	//	}
+	//}
+
+	//int prgssx = pos_.x % (CHA_WIDTH);
+	//int prgssy = pos_.y % (CHA_HEIGHT);
+	//int cx = (pos_.x / (CHA_WIDTH)) % 2;
+	//int cy = (pos_.y / (CHA_HEIGHT)) % 2;
+
+	//if (prgssx == 0 && prgssy == 0 && cx && cy)
+	//{
+	//	// 目的地までの経路を計算
+	//	int x = pos_.x / CHA_WIDTH;
+	//	int y = pos_.y / CHA_HEIGHT;
+
+	//	// ステージの現在位置を基にダイクストラを計算
+	//	stage->Dijkstra({ x, y }); // 敵の現在位置を引数として与える
+	//	x = pPos.x / CHA_WIDTH;
+	//	y = pPos.y / CHA_HEIGHT;
+
+	//	// プレイヤーの位置に基づいて経路を復元し、route_ に保存
+	//	route_ = stage->restore(x, y); // 経路の最短ルートを取得
+	//}
 
 	if (!stop) {
-		Point op = pos_;
-		Point move = { nDir[forward_].x,nDir[forward_].y };
-		Rect eRect = { pos_.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
-		//Stage* stage = (Stage*)FindGameObject<Stage>();
-		pos_ = { pos_.x + move.x,pos_.y + move.y };
-		for (auto& obj : stage->GetStageRects())
-		{
-			if (CheckHit(eRect, obj)) {
-				Rect tmpRectX = { op.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
-				Rect tmpRectY = { pos_.x,op.y,CHA_WIDTH,CHA_HEIGHT };
-				if (!CheckHit(tmpRectX, obj))
-				{
-					pos_.x = op.x;
-				}
-				else if (!CheckHit(tmpRectY, obj))
-				{
-					pos_.y = op.y;
-				}
-				else
-				{
-					pos_ = op;
-				}
-				forward_ = (DIR)(GetRand(3));
-				break;
-			}
-		}
-	}
-	int prgssx = pos_.x % (CHA_WIDTH);
-	int prgssy = pos_.y % (CHA_HEIGHT);
-	int cx = (pos_.x / (CHA_WIDTH)) % 2;
-	int cy = (pos_.y / (CHA_HEIGHT)) % 2;
+		int ex = pos_.x / CHA_WIDTH;
+		int ey = pos_.y / CHA_HEIGHT;
 
-	if (prgssx == 0 && prgssy == 0 && cx && cy)
-	{
-		//forward_ = (DIR)(GetRand(3));
-		//XYCloserMoveRandom();
-		//XYCloserMove(); 
-		//RightHandMove();
-		/*int tmp = GetRand(2);
-		switch (tmp) 
-		{
-		case 0:
-			XYCloserMove();
-			break;
-		case 1:
-			XYCloserMoveRandom();
-			break;
-		case 2:
-		default:
-			break;
-		}*/
+		int px = pPos.x / CHA_WIDTH;
+		int py = pPos.y / CHA_HEIGHT;
 
-		/*int tmp = GetRand(5);
-		if (tmp == 3) {
-			if (isRandom_ == true) {
-				isRandom_ = false;
-			}
-			else {
-				isRandom_ = true;
-			}
-		}
-		if (isRandom_) {
-			XYCloserMoveRandom();
+		if (isDijkstra_) {
+			//ダイクストラ
+			stage->Dijkstra({ ex, ey });
+			route_ = stage->restore(px, py);
 		}
 		else {
-			RightHandMove();
-		}*/
-
-		/*if (isRight_) {
-			RightHandMove();
+			//幅優先探索
+			stage->BFS({ ex,ey }, { px,py });
+			route_ = stage->restore({ ex,ey }, { px,py }); // 経路の最短ルートを取得
 		}
-		else {
-			LeftHandMove();
-		}*/
-		int x = pos_.x / CHA_WIDTH;
-		int y = pos_.y / CHA_HEIGHT;
-		stage->Dijkstra({ x, y });
-		//stage->Dijkstra({ pos_.x, pos_.y });
-		x = pPos.x / CHA_WIDTH;
-		y = pPos.y / CHA_HEIGHT;
-		route_ = stage->restore(x, y);
 
-		for (auto& point : route_) {
-			Move(point);
-		}
-		//route_ = stage->restore(pPos.x, pPos.y);
+		// プレイヤーの位置に基づいて経路を復元し、route_ に保存
+		route_ = stage->restore({ex,ey}, {px,py}); // 経路の最短ルートを取得
+		//route_ = stage->restore(px,py);
+		stop = true;
 	}
-	//Point nDir[4] = { {1,0},{0,1},{-1,0},{0,-1} };
-	//static int judg = 0;
-	//if (!moveNow_) {
-	//	move_ = nDir[GetRand(3)];
-	//	moveNow_ = true;
-	//	dis = {0,0};
-	//	judg = (GetRand(3) + 1);
-	//}
-	//int sx, sy;
-	//sx = pos_.x;
-	//sy = pos_.y;
- //   //pos_ = { pos_.x + move.x - 1, pos_.y + move.y -1 };
-	//if (moveNow_) {
-	//	pos_ = { pos_.x + move_.x, pos_.y + move_.y };
-	//	dis = { dis.x + move_.x,dis.y + move_.y };
-	//	if (dis.x >= CHA_WIDTH * judg || dis.x <= (-CHA_WIDTH * judg) ||
-	//		dis.y >= CHA_HEIGHT * judg || dis.y <= (-CHA_HEIGHT * judg))
-	//	{
-	//		moveNow_ = false;
-	//	}
-	//}
-	//
-	////マップチップとの当たり判定
-	//if (HitToChip(pos_.x, pos_.y)) {
-	//	if (!(HitToChip(sx, pos_.y))) {
-	//		//x座標を元に戻したらぶつかっていない→x座標だけ元に戻す
-	//		pos_.x = sx;
-	//	}
-	//	else if (!HitToChip(pos_.x, sy)) {
-	//		//y座標を元に戻したらぶつかっていない→y座標だけ元に戻す
-	//		pos_.y = sy;
-	//	}
-	//	else {
-	//		//片方だけ戻してもやっぱりぶつかっている→両方もとに戻す
-	//		pos_.x = sx;
-	//		pos_.y = sy;
-	//	}
-	//	moveNow_ = false;
-	//}
-	//
-	////プレイヤーとの当たり判定
-	//Player* player = (Player*)FindGameObject<Player>();
-	//Rect pRect = player->GetRect();
-	//Rect myRect = { pos_.x,pos_.y,CHA_WIDTH,CHA_HEIGHT };
-	//if (CheckHit(myRect, pRect))
-	//{
-	//	printfDx("!");
-	//}
+
+	//printfDx("%d,%d", route_[0].x, route_[0].y);
+
+	if (!route_.empty()) {
+		// 最初のターゲット地点に向かって移動
+		Point nextTarget = route_.front();
+
+		// 目標地点に向かって敵を移動させる
+		Move(nextTarget);
+
+		// 目的地に到達したら次のターゲットへ移動
+		if (pos_.x == nextTarget.x * CHA_WIDTH && pos_.y == nextTarget.y * CHA_HEIGHT) {
+			route_.erase(route_.begin()); // 目的地に到達したので、次のターゲットをセット
+		}
+	}
+	else {
+		stop = false;
+	}
 }
 
 void Enemy::Draw()
@@ -204,14 +159,23 @@ void Enemy::Draw()
 
 	ImGui::Begin("config 1");
 	ImGui::Text("Enemy MoveMethod");
-	if (ImGui::RadioButton("RightHandMove", isRight_ == true)) {
+	if (ImGui::RadioButton("BFS", isDijkstra_ == false)) {
+		isDijkstra_ = false;
+	}
+	if (ImGui::RadioButton("Dijkstra", isDijkstra_ == true)) {
+		isDijkstra_ = true;
+	}
+	/*if (ImGui::RadioButton("RightHandMove", isRight_ == true)) {
 		isRight_ = true;
 	}
 	if (ImGui::RadioButton("LeftHandMove", isRight_ == false)) {
 		isRight_ = false;
-	}
+	}*/
 
 	ImGui::Text("route_ : %d", route_.size());
+	//ImGui::Text("route_[0] : (%d,%d)", route_[0].x, route_[0].y);
+	//ImGui::Text("route_[1] : (%d,%d)", route_[1].x, route_[1].y);
+	//ImGui::Text("Enemy : (%d,%d)", pos_.x, pos_.y);
 	/*if (isRandom_) {
 		ImGui::Text("Random");
 	}
@@ -373,25 +337,28 @@ void Enemy::LeftHandMove()
 
 void Enemy::Move(Point p)
 {
-	for (; p.x == pos_.x && p.y == pos_.y;) {
-		if (p.x - pos_.x == 0) {
-			if (p.y > pos_.y) {
-				pos_.y++;
-			}
-			else {
-				pos_.y--;
-			}
-		}
-		else if (p.y - pos_.y == 0) {
-			if (p.x > pos_.x) {
-				pos_.x++;
-			}
-			else {
-				pos_.y--;
-			}
+	int dx = p.x * CHA_WIDTH;
+	int dy = p.y * CHA_HEIGHT;
+
+	// X軸とY軸にそれぞれ移動量を計算
+	if (pos_.x != dx) {
+		if (dx > pos_.x) {
+			pos_.x += 2;
+			forward_ = RIGHT;
 		}
 		else {
-			return;
+			pos_.x -= 2;
+			forward_ = LEFT;
+		}
+	}
+	else if (pos_.y != dy) {
+		if (dy > pos_.y) {
+			pos_.y += 2;
+			forward_ = DOWN;
+		}
+		else {
+			pos_.y -= 2;
+			forward_ = UP;
 		}
 	}
 }

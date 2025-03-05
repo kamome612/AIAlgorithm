@@ -13,6 +13,7 @@ class Enemy :
     DIR forward_;
     bool isRandom_;
     bool isRight_;
+    bool isDijkstra_;
     std::vector<Point> route_;
     /*Point move_;
     bool moveNow_;

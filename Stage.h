@@ -34,5 +34,6 @@ public:
 	void BFS(Point Start,Point Goal);
 	void Dijkstra(std::pair<int,int> sp);
 	vector<Point> restore(int tx, int ty);
+	vector<Point> restore(Point start, Point goal);
 };
 

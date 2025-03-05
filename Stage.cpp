@@ -84,6 +84,7 @@ namespace {
 Stage::Stage()
 {
 	stageData = vector(STAGE_HEIGHT, vector<STAGE_OBJ>(STAGE_WIDTH, STAGE_OBJ::EMPTY));
+    stageDataForSearch = vector(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, 0));
 
 	for (int y = 0; y < STAGE_HEIGHT; y++)
 	{
@@ -174,6 +175,7 @@ std::queue<std::pair<Point, int>>myQueue;
 //vector<vector<int>> stageDataForSearch;
 vector<vector<int>> dist(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, INT_MAX));
 vector<vector<Point>> pre(STAGE_HEIGHT, vector<Point>(STAGE_WIDTH, { -1,-1 }));
+vector<vector<bool>> visited(STAGE_WIDTH, vector<bool>(STAGE_HEIGHT, false));
 
 void Stage::BFS(Point Start,Point Goal)
 {
@@ -190,17 +192,31 @@ void Stage::BFS(Point Start,Point Goal)
 		//キューから探索候補を取ってくる
 		std::pair<Point, int> Crr = myQueue.front();
 		myQueue.pop();
+
 		//上のnp[]を使って自分の4近傍を探索
 		for (int i = 0; i < 4; i++) {
 			Point tmp = { Crr.first.x + np[i].x,Crr.first.y + np[i].y };
 			if (tmp.x == 0 || tmp.x == STAGE_WIDTH - 1 ||
 				tmp.y == 0 || tmp.y == STAGE_HEIGHT - 1)
 				continue;
+
+			//範囲外
+			if (tmp.x < 0 || tmp.x >= STAGE_WIDTH || tmp.y < 0 || tmp.y >= STAGE_HEIGHT)
+				continue;
+
+			//訪問したか
+			if (visited[tmp.x][tmp.y]) {
+				continue;
+			}
+
 			//隣がEMPTY(床)だったら進める
 			if (stageData[tmp.y][tmp.x] == STAGE_OBJ::EMPTY) {
 				stageDataForSearch[tmp.y][tmp.x] = Crr.second + 1;
+				pre[tmp.y][tmp.x] = Crr.first;  // 親ノードを記録
 				myQueue.push({ tmp,stageDataForSearch[tmp.y][tmp.x] });
+				visited[tmp.x][tmp.y] = true;
 			}
+
 			//stageData[Crr.first.y][Crr.first.x] = BAR;
 		}
 	}
@@ -266,6 +282,22 @@ vector<Point> Stage::restore(int tx, int ty)
 		path.push_back(Point{tx, ty});
 		x = (int)tx, y = (int)ty;
 	}
+	reverse(path.begin(), path.end());
+
+	return path;
+}
+
+vector<Point> Stage::restore(Point start, Point goal)
+{
+	vector<Point> path;
+	Point current = goal;
+
+	//ゴールからスタートまで親ノードをたどって経路を復元
+	while (current.x != start.x || current.y != start.y) {
+		path.push_back(current);
+		current = pre[current.y][current.x];
+	}
+	path.push_back(start);
 	reverse(path.begin(), path.end());
 
 	return path;
